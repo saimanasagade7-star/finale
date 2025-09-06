@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Lost & Found</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+        .card h2 {
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .matches-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .matches-section h2 {
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        .matches-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .match-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-left: 4px solid #48bb78;
+            transition: transform 0.2s ease;
+        }
+
+        .match-card:hover {
+            transform: translateX(5px);
+        }
+
+        .match-card h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .match-card p {
+            color: #718096;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .match-score {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .contact-btn {
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-top: 10px;
+            float: right;
+        }
+
+        .contact-btn:hover {
+            background: #3182ce;
+        }
+
+        .no-items {
+            text-align: center;
+            color: #718096;
+            padding: 40px;
+            font-style: italic;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #48bb78;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .matches-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .icon {
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 Campus Lost & Found</h1>
+            <p>Helping students reconnect with their belongings</p>
+        </div>
+
+        <div class="main-content">
+            <div class="card">
+                <h2><span class="icon">😢</span> Report Lost Item</h2>
+                <form id="lostForm">
+                    <div class="form-group">
+                        <label for="lostItem">Item Name</label>
+                        <input type="text" id="lostItem" placeholder="e.g., Blue Backpack, iPhone 14, Textbook" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lostCategory">Category</label>
+                        <select id="lostCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="electronics">Electronics</option>
+                            <option value="clothing">Clothing</option>
+                            <option value="bags">Bags & Backpacks</option>
+                            <option value="books">Books & Stationery</option>
+                            <option value="accessories">Accessories</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="lostLocation">Last Seen Location</label>
+                        <input type="text" id="lostLocation" placeholder="e.g., Library, Cafeteria, Main Hall" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lostDescription">Description</label>
+                        <textarea id="lostDescription" placeholder="Detailed description including color, brand, distinctive features..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="lostContact">Your Contact (Email/Phone)</label>
+                        <input type="text" id="lostContact" placeholder="your.email@college.edu or phone number" required>
+                    </div>
+                    <button type="submit" class="btn">📝 Report Lost Item</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2><span class="icon">🎉</span> Report Found Item</h2>
+                <form id="foundForm">
+                    <div class="form-group">
+                        <label for="foundItem">Item Name</label>
+                        <input type="text" id="foundItem" placeholder="e.g., Red Wallet, Laptop Charger, Keys" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="foundCategory">Category</label>
+                        <select id="foundCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="electronics">Electronics</option>
+                            <option value="clothing">Clothing</option>
+                            <option value="bags">Bags & Backpacks</option>
+                            <option value="books">Books & Stationery</option>
+                            <option value="accessories">Accessories</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="foundLocation">Found Location</label>
+                        <input type="text" id="foundLocation" placeholder="e.g., Computer Lab, Parking Lot, Gym" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="foundDescription">Description</label>
+                        <textarea id="foundDescription" placeholder="Describe the item you found..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="foundContact">Your Contact (Email/Phone)</label>
+                        <input type="text" id="foundContact" placeholder="your.email@college.edu or phone number" required>
+                    </div>
+                    <button type="submit" class="btn">✅ Report Found Item</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="matches-section">
+            <h2>🔍 Potential Matches</h2>
+            <div id="matchesContainer" class="matches-grid">
+                <div class="no-items">
+                    No potential matches yet. Start by reporting lost or found items!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // In-memory storage for demo (in production, this would use a database)
+        let lostItems = [];
+        let foundItems = [];
+
+        // Form submission handlers
+        document.getElementById('lostForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const item = {
+                id: Date.now(),
+                type: 'lost',
+                name: document.getElementById('lostItem').value,
+                category: document.getElementById('lostCategory').value,
+                location: document.getElementById('lostLocation').value,
+                description: document.getElementById('lostDescription').value,
+                contact: document.getElementById('lostContact').value,
+                timestamp: new Date().toLocaleString()
+            };
+            
+            lostItems.push(item);
+            showNotification(Lost item "${item.name}" has been reported!);
+            this.reset();
+            checkForMatches();
+        });
+
+        document.getElementById('foundForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const item = {
+                id: Date.now(),
+                type: 'found',
+                name: document.getElementById('foundItem').value,
+                category: document.getElementById('foundCategory').value,
+                location: document.getElementById('foundLocation').value,
+                description: document.getElementById('foundDescription').value,
+                contact: document.getElementById('foundContact').value,
+                timestamp: new Date().toLocaleString()
+            };
+            
+            foundItems.push(item);
+            showNotification(Found item "${item.name}" has been reported!);
+            this.reset();
+            checkForMatches();
+        });
+
+        // Matching algorithm
+        function calculateMatchScore(lostItem, foundItem) {
+            let score = 0;
+            
+            // Category match (high weight)
+            if (lostItem.category === foundItem.category) {
+                score += 40;
+            }
+            
+            // Name similarity (moderate weight)
+            const nameMatch = getStringSimilarity(lostItem.name.toLowerCase(), foundItem.name.toLowerCase());
+            score += nameMatch * 30;
+            
+            // Description similarity (moderate weight)
+            const descMatch = getStringSimilarity(lostItem.description.toLowerCase(), foundItem.description.toLowerCase());
+            score += descMatch * 20;
+            
+            // Location proximity (lower weight)
+            const locationMatch = getStringSimilarity(lostItem.location.toLowerCase(), foundItem.location.toLowerCase());
+            score += locationMatch * 10;
+            
+            return Math.round(score);
+        }
+
+        function getStringSimilarity(str1, str2) {
+            const words1 = str1.split(' ');
+            const words2 = str2.split(' ');
+            let matches = 0;
+            
+            words1.forEach(word1 => {
+                words2.forEach(word2 => {
+                    if (word1.length > 2 && word2.length > 2 && 
+                        (word1.includes(word2) || word2.includes(word1))) {
+                        matches++;
+                    }
+                });
+            });
+            
+            return Math.min(matches / Math.max(words1.length, words2.length), 1);
+        }
+
+        function checkForMatches() {
+            const matches = [];
+            
+            lostItems.forEach(lostItem => {
+                foundItems.forEach(foundItem => {
+                    const score = calculateMatchScore(lostItem, foundItem);
+                    if (score >= 30) { // Minimum threshold for showing matches
+                        matches.push({
+                            lostItem,
+                            foundItem,
+                            score
+                        });
+                    }
+                });
+            });
+            
+            displayMatches(matches.sort((a, b) => b.score - a.score));
+        }
+
+        function displayMatches(matches) {
+            const container = document.getElementById('matchesContainer');
+            
+            if (matches.length === 0) {
+                container.innerHTML = '<div class="no-items">No potential matches found yet.</div>';
+                return;
+            }
+            
+            container.innerHTML = matches.map(match => `
+                <div class="match-card">
+                    <h3>🔗 Potential Match</h3>
+                    <p><strong>Lost:</strong> ${match.lostItem.name} (${match.lostItem.location})</p>
+                    <p><strong>Found:</strong> ${match.foundItem.name} (${match.foundItem.location})</p>
+                    <p><strong>Lost by:</strong> ${match.lostItem.contact}</p>
+                    <p><strong>Found by:</strong> ${match.foundItem.contact}</p>
+                    <div class="match-score">${match.score}% Match</div>
+                    <button class="contact-btn" onclick="showContactInfo('${match.lostItem.contact}', '${match.foundItem.contact}')">
+                        💬 Get Contact Info
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function showContactInfo(lostContact, foundContact) {
+            alert(Contact Information:\n\nLost Item Reporter: ${lostContact}\nFound Item Reporter: ${foundContact}\n\nPlease reach out to coordinate the return!);
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Demo data for initial display
+        setTimeout(() => {
+            lostItems = [
+                {
+                    id: 1,
+                    type: 'lost',
+                    name: 'Blue Nike Backpack',
+                    category: 'bags',
+                    location: 'Library Study Room 3',
+                    description: 'Navy blue Nike backpack with laptop compartment, has a small tear on the left side pocket',
+                    contact: 'john.doe@college.edu',
+                    timestamp: new Date(Date.now() - 86400000).toLocaleString()
+                },
+                {
+                    id: 2,
+                    type: 'lost',
+                    name: 'iPhone 13 Pro',
+                    category: 'electronics',
+                    location: 'Student Center Cafeteria',
+                    description: 'Space gray iPhone 13 Pro with a clear case, small crack on screen corner',
+                    contact: 'sarah.smith@college.edu',
+                    timestamp: new Date(Date.now() - 43200000).toLocaleString()
+                }
+            ];
+            
+            foundItems = [
+                {
+                    id: 3,
+                    type: 'found',
+                    name: 'Navy Backpack',
+                    category: 'bags',
+                    location: 'Library Main Floor',
+                    description: 'Dark blue backpack, looks like Nike brand, found near the circulation desk',
+                    contact: 'mike.wilson@college.edu',
+                    timestamp: new Date(Date.now() - 21600000).toLocaleString()
+                }
+            ];
+            
+            checkForMatches();
+        }, 1000);
+    </script>
+</body>
+</html>
